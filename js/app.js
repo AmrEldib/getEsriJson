@@ -14,42 +14,66 @@ require([
   "esri/symbols/SimpleFillSymbol",
   "esri/Color",
 
+  "esri/geometry/webMercatorUtils",
+
   "dojo/parser",
 
-  //"dijit/WidgetSet",
   "dojo/domReady!"
 ], function (
   Map, Draw, Graphic,
   SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, Color,
+  webMercatorUtils,
   parser
 ) {
   parser.parse();
 
-  map = new Map("mapViewDiv", {
-    basemap: "dark-gray",
-    center: [-15.469, 36.428],
-    zoom: 3
-  });
-  map.on("load", createToolbar);;
+  function init() {
+    map = new Map("mapViewDiv", {
+      basemap: "dark-gray",
+      center: [-15.469, 36.428],
+      zoom: 3
+    });
+    map.on("load", createToolbar);
 
-  // Clear txtEsriJson on load
-  document.getElementById('txtEsriJson').value = "";
+    map.on("extent-change", function () {
+      var mapExtent = webMercatorUtils.webMercatorToGeographic(map.extent);
+      var mapCenter = mapExtent.getCenter();
+      document.getElementById("txtLOD").textContent = "Zoom level: " + map.getLevel();
+      document.getElementById("txtCenter").textContent = "Center: " + mapCenter.x + ", " + mapCenter.y;
+      document.getElementById("txtExtent").value = JSON.stringify(mapExtent);
+    })
 
-  document.getElementById('btnClearAll').onclick = function () {
-    map.graphics.clear();
+    // Clear txtEsriJson on load
     document.getElementById('txtEsriJson').value = "";
-    document.getElementById('txtAllText').innerHTML = "";
-    document.getElementById('btnPopText').disabled = true;
+
+    // Added event handler for draw toolbar buttons
+    var drawToolbarButtons = document.getElementsByClassName("drawToolbarButton");
+    Array.prototype.forEach.call(drawToolbarButtons, function (drawToolbarButton) {
+      drawToolbarButton.addEventListener("click", activateTool);
+    });
+
+    // Added event handler for btnClearAll
+    document.getElementById('btnClearAll').onclick = function () {
+      map.graphics.clear();
+      document.getElementById('txtEsriJson').value = "";
+    }
+
+    // Added event handler for popText buttons
+    var popTextButtons = document.getElementsByClassName('btnPopText');
+    Array.prototype.forEach.call(popTextButtons, function (popTextButton) {
+      popTextButton.addEventListener("click", displayPrettyJsonInModel);
+    });
+
+    // Added event handler for btnSelectAll
+    document.getElementById('btnSelectAll').onclick = function () {
+      SelectText("txtAllText");
+    }
+
   }
 
-  document.getElementById('btnSelectAll').onclick = function () {
-    SelectText("txtAllText");
+  function displayPrettyJsonInModel() {
+    document.getElementById('txtAllText').innerHTML = library.json.prettyPrint(JSON.parse(document.getElementById(this.dataset.jsonSource).value));
   }
-
-  var drawToolbarButtons = document.getElementsByClassName("drawToolbarButton");
-  Array.prototype.forEach.call(drawToolbarButtons, function (drawToolbarButton) {
-    drawToolbarButton.addEventListener("click", activateTool);
-  });
 
   function SelectText(element) {
     var doc = document
@@ -98,7 +122,8 @@ require([
     var graphic = new Graphic(evt.geometry, symbol);
     map.graphics.add(graphic);
     document.getElementById('txtEsriJson').value = JSON.stringify(graphic.geometry.toJson());
-    document.getElementById('txtAllText').innerHTML = library.json.prettyPrint(graphic.geometry.toJson());
-    document.getElementById('btnPopText').disabled = false;
   }
+
+  // Initialize app
+  init();
 });

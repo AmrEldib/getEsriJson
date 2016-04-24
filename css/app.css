@@ -12,7 +12,12 @@ html, body {
   padding: 5px;
 }
 
-#txtEsriJson {
+.panel-group .panel {
+  /* Make the panel boarders sharp */
+  border-radius: 0;
+}
+
+.calcite-maps .panel-body textarea.jsonTextarea {
   width: 100%;
   height: 150px;
   margin: 5px 0 0 0;
