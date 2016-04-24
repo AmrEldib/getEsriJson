@@ -1,144 +1,138 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width,user-scalable=no">
-    
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
-    <title>Get Geometry in EsriJson</title>
-    
-    <link rel="stylesheet" href="https://js.arcgis.com/3.16/dijit/themes/nihilo/nihilo.css">
-    <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
-    <style>
-      html, body, #mainWindow {
-        font-family: sans-serif; 
-        height: 100%; 
-        width: 100%; 
-      }
-      html, body {
-        margin: 0; 
-        padding: 0;
-      }
-      #header {
-        height: 200px; 
-        overflow: auto;
-        padding: 0.5em;
-      }
-      #txtEsriJson {
-        width: 400px;
-        height: 100px;
-      }
-    </style>
-    
-    <script src="https://js.arcgis.com/3.16/"></script>
-    <script>
-      var map, toolbar, symbol, geomTask, btnClearAll, textarea;
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width,user-scalable=no">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
 
-      require([
-        "esri/map", 
-        "esri/toolbars/draw",
-        "esri/graphic",
+  <title>Get Geometry in EsriJson</title>
 
-        "esri/symbols/SimpleMarkerSymbol",
-        "esri/symbols/SimpleLineSymbol",
-        "esri/symbols/SimpleFillSymbol",
+  <link rel="stylesheet" href="css/calcite-maps-arcgis-3.x.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/themes/calcite/esri/esri.css" />
 
-        "dojo/parser", "dijit/registry",
+  <link rel="stylesheet" href="css/app.css" />
 
-        "dijit/form/Button", 
-        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
-        "dijit/WidgetSet", "dojo/domReady!"
-      ], function(
-        Map, Draw, Graphic,
-        SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
-        parser, registry,
-        Button
-      ) {
-        parser.parse();
+</head>
 
-        map = new Map("map", {
-          basemap: "streets",
-          center: [-15.469, 36.428],
-          zoom: 3
-        });
-        
-        btnClearAll = new Button({
-        label: "Clear All Graphics",
-        onClick: function(){
-                map.graphics.clear();
-                document.getElementById('txtEsriJson').value = "";
-            }
-        }, "btnClearAll").startup();
-          
-        map.on("load", createToolbar);
-        
-        // loop through all dijits, connect onClick event
-        // listeners for buttons to activate drawing tools
-        registry.forEach(function(d) {
-          // d is a reference to a dijit
-          // could be a layout container or a button
-          if ( d.declaredClass === "dijit.form.Button"  ) {
-            d.on("click", activateTool);
-          }
-        });
+<body class="calcite calcite-maps map-position-absolute zoom-top-left theme-inline-left">
 
-        function activateTool() {
-          var tool = this.label.toUpperCase().replace(/ /g, "_");
-          toolbar.activate(Draw[tool]);
-          map.hideZoomSlider();
-        }
+  <div class="panel-container">
 
-        function createToolbar(themap) {
-          toolbar = new Draw(map);
-          toolbar.on("draw-end", addToMap);
-        }
+    <div id="panelAccordion"
+         class="panel-group" role="tablist" aria-multiselectable="true">
 
-        function addToMap(evt) {
-          var symbol;
-          toolbar.deactivate();
-          map.showZoomSlider();
-          switch (evt.geometry.type) {
-            case "point":
-            case "multipoint":
-              symbol = new SimpleMarkerSymbol();
-              break;
-            case "polyline":
-              symbol = new SimpleLineSymbol();
-              break;
-            default:
-              symbol = new SimpleFillSymbol();
-              break;
-          }
-          var graphic = new Graphic(evt.geometry, symbol);
-          map.graphics.add(graphic);
-          console.log(graphic.geometry.toJson());
-          document.getElementById('txtEsriJson').value = JSON.stringify(graphic.geometry.toJson());
-        }
-      });
-    </script>
-  </head>
-  <body class="nihilo">
+      <div id="panelInfo" class="panel">
 
-  <div id="mainWindow" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'">
-    <div id="header" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
-      <span>Draw a geometry on the map, the equivalent EsriJson will show up in the box. Only the last geometry is kept.<br /></span>
-      <button data-dojo-type="dijit/form/Button">Point</button>
-      <button data-dojo-type="dijit/form/Button">Multi Point</button>
-      <button data-dojo-type="dijit/form/Button">Line</button>
-      <button data-dojo-type="dijit/form/Button">Polyline</button>
-      <button data-dojo-type="dijit/form/Button">Polygon</button>
-      <button data-dojo-type="dijit/form/Button">Freehand Polyline</button>
-      <button data-dojo-type="dijit/form/Button">Freehand Polygon</button>
-      
-      <button data-dojo-type="dijit/form/Button">Arrow</button>
-      <button data-dojo-type="dijit/form/Button">Triangle</button>
-      <button data-dojo-type="dijit/form/Button">Circle</button>
-      <button data-dojo-type="dijit/form/Button">Ellipse</button><br/>
-      <textarea id="txtEsriJson" placeholder="Geometry JSON will go here"></textarea>
-      <button id="btnClearAll" type="button">Clear All Graphics</button>
+        <div id="headingInfo" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <span>Draw a geometry on the map</span>
+          </div>
+        </div>
+        <div id="collapseInfo" class="panel-primary" role="tabpanel" aria-labelledby="headingInfo">
+          <div class="panel-body">
+            <div class="btn-group" role="group">
+              <button class="btn btn-default drawToolbarButton"
+                      type="button"
+                      data-geometry-type="Point"
+                      title="Point">
+                <img src="images/point.png" title="Point" />
+              </button>
+              <button class="btn btn-default drawToolbarButton"
+                      type="button"
+                      data-geometry-type="Multi_Point"
+                      title="Multi Point">
+                <img src="images/multipoint.png" title="Multi Point" />
+              </button>
+              <button class="btn btn-default drawToolbarButton"
+                      type="button"
+                      data-geometry-type="Line"
+                      title="Line">
+                <img src="images/line.png" title="Line" />
+              </button>
+              <button class="btn btn-default drawToolbarButton"
+                      type="button"
+                      data-geometry-type="Polyline"
+                      title="Polyline">
+                <img src="images/polyline.png" title="Polyline" />
+              </button>
+              <button class="btn btn-default drawToolbarButton"
+                      type="button"
+                      data-geometry-type="Polygon"
+                      title="Polygon">
+                <img src="images/polygon.png" title="Polygon" />
+              </button>
+              <button class="btn btn-default drawToolbarButton"
+                      type="button"
+                      data-geometry-type="Freehand_Polyline"
+                      title="Freehand Polyline">
+                <img src="images/freehandpolyline.png" title="Freehand Polyline" />
+              </button>
+              <button class="btn btn-default drawToolbarButton"
+                      type="button"
+                      data-geometry-type="Freehand_Polygon"
+                      title="Freehand Polygon">
+                <img src="images/freehandpolygon.png" title="Freehand Polygon" />
+              </button>
+            </div>
+
+            <button class="btn btn-default"
+                    id="btnClearAll"
+                    type="button"
+                    title="Clear All Graphics">
+              <span class="esri-icon-erase" title="Clear All Graphics" />
+            </button>
+
+            <button class="btn btn-default"
+                    id="btnPopText"
+                    type="button"
+                    data-toggle="modal"
+                    data-target="#myModal"
+                    title="View All JSON">
+              <span class="glyphicon glyphicon-resize-full" title="View all text" />
+            </button>
+
+            <textarea class="form-control"
+                        id="txtEsriJson"
+                        rows="3"
+                        placeholder="Geometry's JSON goes here.."></textarea>
+
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div id="map" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
+
   </div>
 
-  </body>
+  <div class="map-container">
+    <div id="mapViewDiv" class="map-position-absolute"></div>
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Geometry's JSON</h4>
+        </div>
+        <div class="modal-body">
+          <button type="button" id="btnSelectAll" class="btn pull-right btn-link btn-xs">
+            Select All
+          </button>
+          <pre><code id="txtAllText"></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="js/jsapi-getesrijson-custom-build/dojo/dojo.js" data-dojo-config="async: true"></script>
+
+  <script src="js/app.js"></script>
+  <script src="js/colorjson.js"></script>
+</body>
 </html>

@@ -1,0 +1,44 @@
+﻿html, body, #mainWindow {
+  height: 100%;
+  width: 100%;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.panel-title {
+  padding: 5px;
+}
+
+#txtEsriJson {
+  width: 100%;
+  height: 150px;
+  margin: 5px 0 0 0;
+  resize: none;
+}
+
+#txtAllText {
+  width: 100%;
+  resize: none;
+  min-height: 500px;
+}
+
+pre {
+  background-color: ghostwhite;
+  border: 1px solid silver;
+  width: 100%;
+}
+
+.json-key {
+  color: brown;
+}
+
+.json-value {
+  color: navy;
+}
+
+.json-string {
+  color: olive;
+}
