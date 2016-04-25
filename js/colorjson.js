@@ -1,4 +1,6 @@
-﻿if (!library)
+﻿// Source http://jsfiddle.net/unLSJ/
+
+if (!library)
   var library = {};
 
 library.json = {

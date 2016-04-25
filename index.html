@@ -34,66 +34,80 @@
 
         <div id="collapseEsriJson" class="panel-primary collapse" role="tabpanel" aria-labelledby="headingEsriJson">
           <div class="panel-body">
-            <div class="btn-group" role="group">
-              <button class="btn btn-default drawToolbarButton"
+            <div class="form-group">
+              <div class="btn-group" role="group">
+                <button class="btn btn-default drawToolbarButton"
+                        type="button"
+                        data-geometry-type="Point"
+                        title="Point">
+                  <img src="images/point.png" title="Point" />
+                </button>
+                <button class="btn btn-default drawToolbarButton"
+                        type="button"
+                        data-geometry-type="Multi_Point"
+                        title="Multi Point">
+                  <img src="images/multipoint.png" title="Multi Point" />
+                </button>
+                <button class="btn btn-default drawToolbarButton"
+                        type="button"
+                        data-geometry-type="Line"
+                        title="Line">
+                  <img src="images/line.png" title="Line" />
+                </button>
+                <button class="btn btn-default drawToolbarButton"
+                        type="button"
+                        data-geometry-type="Polyline"
+                        title="Polyline">
+                  <img src="images/polyline.png" title="Polyline" />
+                </button>
+                <button class="btn btn-default drawToolbarButton"
+                        type="button"
+                        data-geometry-type="Polygon"
+                        title="Polygon">
+                  <img src="images/polygon.png" title="Polygon" />
+                </button>
+                <button class="btn btn-default drawToolbarButton"
+                        type="button"
+                        data-geometry-type="Freehand_Polyline"
+                        title="Freehand Polyline">
+                  <img src="images/freehandpolyline.png" title="Freehand Polyline" />
+                </button>
+                <button class="btn btn-default drawToolbarButton"
+                        type="button"
+                        data-geometry-type="Freehand_Polygon"
+                        title="Freehand Polygon">
+                  <img src="images/freehandpolygon.png" title="Freehand Polygon" />
+                </button>
+              </div>
+
+              <button class="btn btn-default"
+                      id="btnClearAll"
                       type="button"
-                      data-geometry-type="Point"
-                      title="Point">
-                <img src="images/point.png" title="Point" />
+                      title="Clear All Graphics">
+                <span class="esri-icon-erase" title="Clear All Graphics" />
               </button>
-              <button class="btn btn-default drawToolbarButton"
+
+              <button class="btn btn-default btnPopText"
                       type="button"
-                      data-geometry-type="Multi_Point"
-                      title="Multi Point">
-                <img src="images/multipoint.png" title="Multi Point" />
-              </button>
-              <button class="btn btn-default drawToolbarButton"
-                      type="button"
-                      data-geometry-type="Line"
-                      title="Line">
-                <img src="images/line.png" title="Line" />
-              </button>
-              <button class="btn btn-default drawToolbarButton"
-                      type="button"
-                      data-geometry-type="Polyline"
-                      title="Polyline">
-                <img src="images/polyline.png" title="Polyline" />
-              </button>
-              <button class="btn btn-default drawToolbarButton"
-                      type="button"
-                      data-geometry-type="Polygon"
-                      title="Polygon">
-                <img src="images/polygon.png" title="Polygon" />
-              </button>
-              <button class="btn btn-default drawToolbarButton"
-                      type="button"
-                      data-geometry-type="Freehand_Polyline"
-                      title="Freehand Polyline">
-                <img src="images/freehandpolyline.png" title="Freehand Polyline" />
-              </button>
-              <button class="btn btn-default drawToolbarButton"
-                      type="button"
-                      data-geometry-type="Freehand_Polygon"
-                      title="Freehand Polygon">
-                <img src="images/freehandpolygon.png" title="Freehand Polygon" />
+                      data-toggle="modal"
+                      data-target="#myModal"
+                      data-json-source="txtEsriJson"
+                      title="View All JSON">
+                <span class="glyphicon glyphicon-resize-full" title="View all text" />
               </button>
             </div>
 
-            <button class="btn btn-default"
-                    id="btnClearAll"
-                    type="button"
-                    title="Clear All Graphics">
-              <span class="esri-icon-erase" title="Clear All Graphics" />
-            </button>
-
-            <button class="btn btn-default btnPopText"
-                    type="button"
-                    data-toggle="modal"
-                    data-target="#myModal"
-                    data-json-source="txtEsriJson"
-                    title="View All JSON">
-              <span class="glyphicon glyphicon-resize-full" title="View all text" />
-            </button>
+            <div class="form-group">
+              <select id="selWkid" class="form-control" name="wkid">
+                <option value="102003">102003 (Albers)</option>
+                <option value="102100">102100 (Web Merctor)</option>
+                <option value="4326">4326 (WGS84)</option>
+                <option value="2243">2243 (Idaho West, State Plane)</option>
+                <option value="2244">2244 (Indiana East, State Plane)</option>
+                <option value="2248">2248 (Maryland, State Plane)</option>
+                <option value="3995">3995 (Arctic Polar Stereographic)</option>
+              </select>
+            </div>
 
             <textarea class="form-control jsonTextarea"
                       id="txtEsriJson"
