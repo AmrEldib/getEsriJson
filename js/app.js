@@ -1,4 +1,4 @@
-var map, toolbar;
+var map, toolbar, gs;
 
 $('#myModal').on('shown.bs.modal', function () {
   $('#myInput').focus()
@@ -6,6 +6,7 @@ $('#myModal').on('shown.bs.modal', function () {
 
 require([
   "esri/map",
+  "esri/SpatialReference",
   "esri/toolbars/draw",
   "esri/graphic",
 
@@ -15,14 +16,17 @@ require([
   "esri/Color",
 
   "esri/geometry/webMercatorUtils",
+  "esri/tasks/ProjectParameters",
+  "esri/tasks/GeometryService",
+  "esri/geometry/jsonUtils",
 
   "dojo/parser",
 
   "dojo/domReady!"
 ], function (
-  Map, Draw, Graphic,
+  Map, SpatialReference, Draw, Graphic,
   SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, Color,
-  webMercatorUtils,
+  webMercatorUtils, ProjectParameters, GeometryService, geometryJsonUtils,
   parser
 ) {
   parser.parse();
@@ -42,6 +46,36 @@ require([
       document.getElementById("txtCenter").textContent = "Center: " + mapCenter.x + ", " + mapCenter.y;
       document.getElementById("txtExtent").value = JSON.stringify(mapExtent);
     })
+
+    gs = new GeometryService("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+
+    document.getElementById('selWkid').addEventListener('change', function () {
+      var selWkid = document.getElementById('selWkid');
+      var txtEsriJson = document.getElementById('txtEsriJson');
+      if (txtEsriJson.value) {
+        var sr = new SpatialReference(parseInt(selWkid.value));
+        var params = new ProjectParameters();
+        params.geometries = [geometryJsonUtils.fromJson(JSON.parse(txtEsriJson.value))];
+        params.outSR = sr;
+        var project = gs.project(params);
+        project.then(success, failure);
+      }
+    });
+
+    function success(result) {
+      if (result.length) {
+        var bounds = result[0];
+        document.getElementById('txtEsriJson').value = JSON.stringify(bounds);
+      } else {
+        console.log("Project was successful, but no results were returned.");
+      }
+    }
+
+    function failure(err) {
+      document.getElementById('txtEsriJson').value = "Sorry, an error occurred while re-projecting.\n"
+        + "Please try again or report this error: \n"
+        + err;
+    }
 
     // Clear txtEsriJson on load
     document.getElementById('txtEsriJson').value = "";
@@ -121,7 +155,7 @@ require([
     }
     var graphic = new Graphic(evt.geometry, symbol);
     map.graphics.add(graphic);
-    document.getElementById('txtEsriJson').value = JSON.stringify(graphic.geometry.toJson());
+    document.getElementById('txtEsriJson').value = JSON.stringify(evt.geometry.toJson());
   }
 
   // Initialize app
