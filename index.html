@@ -39,7 +39,7 @@
                 <button class="btn btn-default drawToolbarButton"
                         type="button"
                         data-geometry-type="Point"
-                        title="Point">
+                        title="Point" aria-label="This is the message of the tooltip">
                   <img src="images/point.png" title="Point" />
                 </button>
                 <button class="btn btn-default drawToolbarButton"
@@ -139,8 +139,19 @@
                     title="View All JSON">
               <span class="glyphicon glyphicon-resize-full" title="View all text" />
             </button>
-            <p id="txtLOD">Zoom level: </p>
-            <p id="txtCenter">Center: </p>
+            <p>
+              <label title="Level of Details">Zoom level </label>
+              <span id="txtLOD" />
+            </p>
+            <p>
+              <label title="In Geographic coordinates">Center </label>
+              <span id="txtCenter" />
+            </p>
+            <p>
+              <label title="In map coordinates">Cursor </label>
+              <span id="txtCursor" />
+            </p>
+
             <textarea class="form-control jsonTextarea"
                       id="txtExtent"
                       rows="3"

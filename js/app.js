@@ -42,10 +42,14 @@ require([
     map.on("extent-change", function () {
       var mapExtent = webMercatorUtils.webMercatorToGeographic(map.extent);
       var mapCenter = mapExtent.getCenter();
-      document.getElementById("txtLOD").textContent = "Zoom level: " + map.getLevel();
-      document.getElementById("txtCenter").textContent = "Center: " + mapCenter.x + ", " + mapCenter.y;
+      document.getElementById("txtLOD").textContent = map.getLevel();
+      document.getElementById("txtCenter").textContent = mapCenter.x + ", " + mapCenter.y;
       document.getElementById("txtExtent").value = JSON.stringify(mapExtent);
-    })
+    });
+
+    map.on("mouse-move", function (evt) {
+      document.getElementById("txtCursor").textContent = evt.mapPoint.x + ", " + evt.mapPoint.y;
+    });
 
     gs = new GeometryService("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 
